@@ -9,33 +9,49 @@ const handleDomo = (e, onDomoAdded) => {
 
     const name = e.target.querySelector('#domoName').value;
     const age = e.target.querySelector('#domoAge').value;
+    const level = e.target.querySelector('#domoLevel').value;
 
-    if(!name || !age) {
+    if (!name || !age || !level) {
         helper.handleError('All fields are required');
         return false;
     }
 
-    helper.sendPost(e.target.action, {name, age}, onDomoAdded);
+    helper.sendPost(e.target.action, { name, age, level }, onDomoAdded);
     return false;
 }
 
 const DomoForm = (props) => {
     return (
         <form id="domoForm"
-        onSubmit={(e) => handleDomo(e, props.triggerReload)}
-        name="domoForm"
-        action="/maker"
-        method="POST"
-        className="domoForm"
+            onSubmit={(e) => handleDomo(e, props.triggerReload)}
+            name="domoForm"
+            action="/maker"
+            method="POST"
+            className="domoForm"
         >
             <label htmlFor="name">Name: </label>
             <input id="domoName" type="text" name="name" placeholder="Domo Name" />
             <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="number" min="0" name="age"/>
+            <input id="domoAge" type="number" min="0" name="age" />
+            <label htmlFor="level">Level: </label>
+            <input id="domoLevel" type="number" min="0" name="level" />
             <input className="makeDomoSubmit" type="submit" value="Make Domo" />
         </form>
     );
 };
+
+const ViewDomoForm = (props) => {
+    return (
+        <form id="viewDomoForm"
+        name="viewDomoForm"
+        action="/viewDomo"
+        method="POST"
+        className="viewDomoForm">
+                <input className="viewDomoSubmit" type="submit" value="View Latest Domo" />
+        </form>
+    )
+
+}
 
 const DomoList = (props) => {
     const [domos, setDomos] = useState(props.domos);
@@ -49,7 +65,7 @@ const DomoList = (props) => {
         loadDomosFromServer();
     }, [props.reloadDomos]);
 
-    if(domos.length === 0) {
+    if (domos.length === 0) {
         return (
             <div className="domoList">
                 <h3 className="emptyDomo">No Domos Yet!</h3>
@@ -63,6 +79,7 @@ const DomoList = (props) => {
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
                 <h3 className="domoName">Name: {domo.name}</h3>
                 <h3 className="domoAge">Age: {domo.age}</h3>
+                <h3 className="domoLevel">Level: {domo.level}</h3>
             </div>
         );
     });
@@ -81,6 +98,9 @@ const App = () => {
         <div>
             <div id="makeDomo">
                 <DomoForm triggerReload={() => setReloadDomos(!reloadDomos)} />
+            </div>
+            <div id="viewDomo">
+            <ViewDomoForm triggerReload={() => setReloadDomos(!reloadDomos)} />
             </div>
             <div id="domos">
                 <DomoList domos={[]} reloadDomos={reloadDomos} />
